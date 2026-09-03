@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BISMBANGENERATE-PROMPTS</title>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --card-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* En-tête */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: 0.5px;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 1.5rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-google {
+            background-color: #ffffff;
+            color: #1f2937;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-google:hover {
+            background-color: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        .lang-selector select {
+            background-color: var(--bg-primary);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Conteneur Principal */
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 900px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Cartes d'interface */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        select, textarea, input {
+            width: 100%;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.8rem 1rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        select:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.9rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Zone d'affichage du résultat */
+        .output-box {
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 250px;
+            white-space: pre-wrap;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            position: relative;
+        }
+
+        .actions-output {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-light);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+
+        .badge {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>BISMBANGENERATE-PROMPTS</span>
+        </div>
+        <div class="header-actions">
+            <div class="lang-selector">
+                <select id="appLanguage" onchange="changeLanguage()">
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+            <button class="btn-google" id="googleBtn" onclick="handleAuth()">
+                <i class="fa-brands fa-google"></i>
+                <span id="authText">S'inscrire avec Google</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="grid">
+            <!-- Panneau de Saisie -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span id="labelConfigure">Configuration de l'idée</span>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelDomain" for="domainSelect">Domaine professionnel / Éducation</label>
+                    <select id="domainSelect" onchange="updateSubDomains()">
+                        <option value="">-- Sélectionnez un domaine --</option>
+                        <option value="cinema">Cinéma & Vidéo</option>
+                        <option value="music">Musique & Audio</option>
+                        <option value="cuisine">Cuisine & Gastronomie</option>
+                        <option value="tech">Programmation & Tech</option>
+                        <option value="education">Éducation & Formation</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelIdea" for="ideaSelect">Exemples d'idées préconçues</label>
+                    <select id="ideaSelect" onchange="fillIdeaText()">
+                        <option value="">-- Choisir une idée rapide --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelInput" for="userIdea">Votre idée originale</label>
+                    <textarea id="userIdea" placeholder="Décrivez brièvement votre idée ici... (ex: Une scène de film policier sous la pluie)"></textarea>
+                </div>
+
+                <button class="btn-primary" onclick="generatePrompt()">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span id="btnGenerate">Générer le Prompt Pro</span>
+                </button>
+            </div>
+
+            <!-- Panneau de Sortie -->
+            <div class="card">
+                <div class="card-title" style="justify-content: space-between;">
+                    <span style="display: flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span id="labelResult">Prompt Optimisé</span>
+                    </span>
+                    <span class="badge" id="badgeCorrected">Correction Orthographique Activée</span>
+                </div>
+
+                <div class="output-box" id="promptOutput">
+                    <!-- Le résultat s'affichera ici -->
+                </div>
+
+                <div class="actions-output">
+                    <button class="btn-secondary" onclick="copyPrompt()">
+                        <i class="fa-regular fa-copy"></i>
+                        <span id="btnCopy">Copier</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>BISMBANGENERATE-PROMPTS &copy; 2026 - Application Gratuite pour Bureau</p>
+    </footer>
+
+    <script>
+        // Données d'exemples préconçus par domaine
+        const ideasDatabase = {
+            cinema: [
+                "Scène de film policier sombre avec ambiance néon et pluie.",
+                "Publicité commerciale pour une marque de voiture électrique.",
+                "Script de court-métrage dramatique entre deux frères."
+            ],
+            music: [
+                "Composition d'un morceau Lo-Fi Chill pour la concentration.",
+                "Structure de paroles pour une chanson Pop moderne.",
+                "Mixage audio et mastering pour un morceau de Jazz."
+            ],
+            cuisine: [
+                "Création d'un menu gastronomique 3 services pour l'été.",
+                "Recette de pâtisserie moderne fusionnant saveurs asiatiques et françaises.",
+                "Guide d'accord mets et vins pour un dîner d'affaires."
+            ],
+            tech: [
+                "Architecture d'une application web RESTful avec Node.js.",
+                "Algorithme d'optimisation de recherche pour base de données SQL.",
+                "Documentation technique d'une API de paiement sécurisée."
+            ],
+            education: [
+                "Plan de cours interactif pour enseigner la physique quantique aux débutants.",
+                "Exercices d'apprentissage du vocabulaire anglais pour niveau intermédiaire.",
+                "Atelier pédagogique sur la sensibilisation à l'environnement."
+            ]
+        };
+
+        // Traductions pour la gestion multilingue
+        const translations = {
+            fr: {
+                authText: "S'inscrire avec Google",
+                authSuccess: "Connecté (Google)",
+                labelConfigure: "Configuration de l'idée",
+                labelDomain: "Domaine professionnel / Éducation",
+                labelIdea: "Exemples d'idées préconçues",
+                labelInput: "Votre idée originale",
+                btnGenerate: "Générer le Prompt Pro",
+                labelResult: "Prompt Optimisé",
+                btnCopy: "Copier",
+                badgeCorrected: "Correction Orthographique Activée",
+                placeholderInput: "Décrivez brièvement votre idée ici... (ex: Une scène de film policier sous la pluie)",
+                promptTemplate: "RÔLE: Expert de haut niveau en "
+            },
+            en: {
+                authText: "Sign in with Google",
+                authSuccess: "Connected (Google)",
+                labelConfigure: "Idea Configuration",
+                labelDomain: "Professional Domain / Education",
+                labelIdea: "Predefined Idea Examples",
+                labelInput: "Your Original Idea",
+                btnGenerate: "Generate Pro Prompt",
+                labelResult: "Optimized Prompt",
+                btnCopy: "Copy",
+                badgeCorrected: "Spelling Correction Active",
+                placeholderInput: "Briefly describe your idea here... (e.g. A noir film scene in the rain)",
+                promptTemplate: "ROLE: High-level Expert in "
+            },
+            es: {
+                authText: "Registrarse con Google",
+                authSuccess: "Conectado (Google)",
+                labelConfigure: "Configuración de la idea",
+                labelDomain: "Dominio Profesional / Educación",
+                labelIdea: "Ejemplos de ideas predefinidas",
+                labelInput: "Tu idea original",
+                btnGenerate: "Generar Prompt Pro",
+                labelResult: "Prompt Optimizado",
+                btnCopy: "Copiar",
+                badgeCorrected: "Corrección Ortográfica Activa",
+                placeholderInput: "Describe brevemente tu idea aquí... (ej: Una escena de película policíaca bajo la lluvia)",
+                promptTemplate: "ROL: Experto de alto nivel en "
+            }
+        };
+
+        let isAuthenticated = false;
+
+        // Mise à jour des sous-domaines dans le menu déroulant
+        function updateSubDomains() {
+            const domainSelect = document.getElementById('domainSelect');
+            const ideaSelect = document.getElementById('ideaSelect');
+            const selectedDomain = domainSelect.value;
+
+            ideaSelect.innerHTML = '<option value="">-- Choisir une idée rapide --</option>';
+
+            if (selectedDomain && ideasDatabase[selectedDomain]) {
+                ideasDatabase[selectedDomain].forEach(idea => {
+                    const option = document.createElement('option');
+                    option.value = idea;
+                    option.textContent = idea;
+                    ideaSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Remplir le champ texte avec l'idée sélectionnée
+        function fillIdeaText() {
+            const ideaSelect = document.getElementById('ideaSelect');
+            const userIdea = document.getElementById('userIdea');
+            if (ideaSelect.value) {
+                userIdea.value = ideaSelect.value;
+            }
+        }
+
+        // Simulation de correction d'orthographe simple
+        function correctText(text) {
+            if (!text) return "";
+            // Met la première lettre en capitale et ajoute un point s'il n'y en a pas
+            let corrected = text.trim();
+            corrected = corrected.charAt(0).toUpperCase() + corrected.slice(1);
+            if (!/[.!?]$/.test(corrected)) {
+                corrected += '.';
+            }
+            return corrected;
+        }
+
+        // Génération du prompt professionnel
+        function generatePrompt() {
+            const domainSelect = document.getElementById('domainSelect');
+            const userIdea = document.getElementById('userIdea').value;
+            const outputBox = document.getElementById('promptOutput');
+            const currentLang = document.getElementById('appLanguage').value;
+
+            if (!userIdea) {
+                outputBox.textContent = currentLang === 'fr' ? "Veuillez saisir une idée ou en choisir une dans le menu." : 
+                                       currentLang === 'en' ? "Please enter an idea or select one from the menu." : 
+                                       "Por favor, introduce una idea o selecciona una del menú.";
+                return;
+            }
+
+            const cleanIdea = correctText(userIdea);
+            const domainText = domainSelect.options[domainSelect.selectedIndex].text || "Général";
+
+            // Structuration professionnelle du prompt
+            let generatedPrompt = "";
+
+            if (currentLang === 'fr') {
+                generatedPrompt = `[CONTEXTE ET RÔLE]\nVous êtes un expert professionnel reconnu dans le domaine suivant : ${domainText}.\n\n` +
+                `[OBJECTIF]\nDévelopper et exécuter de manière professionnelle l'idée suivante : "${cleanIdea}"\n\n` +
+                `[CONSIGNES SPÉCIFIQUES]\n` +
+                `1. Analysez le besoin technique et créatif lié à cette idée.\n` +
+                `2. Proposez une structure détaillée étape par étape (Méthodologie, Outils, Livrables).\n` +
+                `3. Assurez-vous que le résultat soit immédiatement exploitable dans un cadre professionnel.\n` +
+                `4. Adaptez le ton et le vocabulaire aux standards de l'industrie concernée.`;
+            } else if (currentLang === 'en') {
+                generatedPrompt = `[CONTEXT & ROLE]\nYou are a top-tier professional expert in: ${domainText}.\n\n` +
+                `[OBJECTIVE]\nProfessionally develop and execute the following idea: "${cleanIdea}"\n\n` +
+                `[SPECIFIC INSTRUCTIONS]\n` +
+                `1. Analyze the technical and creative requirements for this idea.\n` +
+                `2. Provide a step-by-step detailed roadmap (Methodology, Tools, Deliverables).\n` +
+                `3. Ensure the output is directly actionable in a professional environment.\n` +
+                `4. Match the tone and language to standard industry requirements.`;
+            } else {
+                generatedPrompt = `[CONTEXTO Y ROL]\nEres un experto profesional de alto nivel en el campo de: ${domainText}.\n\n` +
+                `[OBJETIVO]\nDesarrollar y ejecutar de manera profesional la siguiente idea: "${cleanIdea}"\n\n` +
+                `[INSTRUCCIONES ESPECÍFICAS]\n` +
+                `1. Analiza las necesidades técnicas y creativas de esta idea.\n` +
+                `2. Proporciona una estructura detallada paso a paso (Metodología, Herramientas, Entregables).\n` +
+                `3. Asegúrate de que el resultado sea directamente aplicable en un entorno profesional.\n` +
+                `4. Adapta el tono y el vocabulario a los estándares de la industria.`;
+            }
+
+            outputBox.textContent = generatedPrompt;
+        }
+
+        // Copier le prompt dans le presse-papier
+        function copyPrompt() {
+            const promptText = document.getElementById('promptOutput').textContent;
+            if (promptText) {
+                navigator.clipboard.writeText(promptText);
+                alert("Prompt copié dans le presse-papier !");
+            }
+        }
+
+        // Connexion simulée avec Google
+        function handleAuth() {
+            const authText = document.getElementById('authText');
+            const currentLang = document.getElementById('appLanguage').value;
+            
+            isAuthenticated = !isAuthenticated;
+            if (isAuthenticated) {
+                authText.textContent = translations[currentLang].authSuccess;
+                document.getElementById('googleBtn').style.backgroundColor = "#e2e8f0";
+            } else {
+                authText.textContent = translations[currentLang].authText;
+                document.getElementById('googleBtn').style.backgroundColor = "#ffffff";
+            }
+        }
+
+        // Changement dynamique de langue
+        function changeLanguage() {
+            const lang = document.getElementById('appLanguage').value;
+            const t = translations[lang];
+
+            document.getElementById('labelConfigure').textContent = t.labelConfigure;
+            document.getElementById('labelDomain').textContent = t.labelDomain;
+            document.getElementById('labelIdea').textContent = t.labelIdea;
+            document.getElementById('labelInput').textContent = t.labelInput;
+            document.getElementById('btnGenerate').textContent = t.btnGenerate;
+            document.getElementById('labelResult').textContent = t.labelResult;
+            document.getElementById('btnCopy').textContent = t.btnCopy;
+            document.getElementById('badgeCorrected').textContent = t.badgeCorrected;
+            document.getElementById('userIdea').placeholder = t.placeholderInput;
+            
+            if (!isAuthenticated) {
+                document.getElementById('authText').textContent = t.authText;
+            } else {
+                document.getElementById('authText').textContent = t.authSuccess;
+            }
+        }
+    </script>
+</body>
+</html>
